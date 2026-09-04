@@ -1,0 +1,2 @@
+config ZMK_SHIELD_GPIO_TEST
+	def_bool $(shields_list_contains,gpio_test)

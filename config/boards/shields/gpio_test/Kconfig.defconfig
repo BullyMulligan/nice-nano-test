@@ -1,0 +1,6 @@
+if ZMK_SHIELD_GPIO_TEST
+
+config ZMK_KEYBOARD_NAME
+	default "GPIO Test"
+
+endif

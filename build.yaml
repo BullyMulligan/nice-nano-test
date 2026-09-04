@@ -1,0 +1,5 @@
+# This file generates the firmware builds for the GitHub Actions workflow.
+# See: https://zmk.dev/docs/customization
+include:
+  - board: nice_nano//zmk
+    shield: gpio_test
