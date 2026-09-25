@@ -10,9 +10,16 @@
 };
 
 / {
-    analog_stick_split0: analog_stick_split0 {
-        compatible = "zmk,analog-stick-split";
-        device = <&analog_stick0>;
-        reg = <0 0>;
+    // Container with #size-cells = <0> so that reg = <index> is parsed as a
+    // single-cell address (the root node uses #address-cells = 1 / #size-cells = 1).
+    analog_stick_splits {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        analog_stick_split0: analog_stick_split0 {
+            compatible = "zmk,analog-stick-split";
+            device = <&analog_stick0>;
+            reg = <0>;
+        };
     };
 };
