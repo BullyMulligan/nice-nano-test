@@ -1,0 +1,138 @@
+/*
+ * Onmi44 v3 - shared devicetree for both halves.
+ * Board: nice!nano (nRF52840), pro_micro pinout.
+ *
+ * Hardware mod "variant B" (per half):
+ *   - stick SEL+ pin lifted from A3 pad  -> D14 (P1.11): stick button, active low
+ *   - A3 pad (P0.31, AIN7) -> XPOS net: stick X axis
+ *   - A1 pad (P0.02, AIN0) -> YPOS net: stick Y axis
+ *   - P0.09/P0.10 remain attached to YPOS/XPOS as unused NFC pins,
+ *     so UICR nfct-pins-as-gpios is required to keep analog levels clean.
+ *
+ * Matrix: 6 cols x 4 rows, col2row diodes, 22 keys + stick button per half.
+ * Column wiring: D1 D0 D2 D3 D4 D5 (pro_micro 1 0 2 3 4 5)
+ * Row wiring:    D6 D7 D8 D9    (pro_micro 6 7 8 9)
+ * Display (SPI1): SCK = A0 (P1.15), MOSI = A2 (P0.29), CS = D15 (P1.13, active high)
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include <zephyr/dt-bindings/adc/adc.h>
+#include <zephyr/dt-bindings/adc/nrf-saadc.h>
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &physical_layout0;
+    };
+
+    kscan0: kscan0 {
+        compatible = "zmk,kscan-composite";
+        rows = <4>;
+        columns = <6>;
+        wakeup-source;
+
+        matrix {
+            kscan = <&kscan_matrix>;
+        };
+
+        stick_button {
+            kscan = <&kscan_direct>;
+            row-offset = <3>;
+            col-offset = <4>;
+        };
+    };
+
+    kscan_matrix: kscan_matrix {
+        compatible = "zmk,kscan-gpio-matrix";
+        wakeup-source;
+        diode-direction = "col2row";
+        col-gpios
+            = <&pro_micro 1 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 0 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 2 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 3 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 4 GPIO_ACTIVE_HIGH>
+            , <&pro_micro 5 GPIO_ACTIVE_HIGH>
+            ;
+        row-gpios
+            = <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            , <&pro_micro 9 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+            ;
+    };
+
+    kscan_direct: kscan_direct {
+        compatible = "zmk,kscan-gpio-direct";
+        wakeup-source;
+        input-gpios = <&pro_micro 14 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+    };
+
+    default_transform: keymap_transform {
+        compatible = "zmk,matrix-transform";
+        rows = <4>;
+        columns = <12>;
+        // 46 positions: 23 per half (22 keys + stick button)
+        map = <
+RC(0,0)  RC(0,1)  RC(0,2)  RC(0,3)  RC(0,4)  RC(0,5)   RC(0,6)  RC(0,7)  RC(0,8)  RC(0,9)  RC(0,10) RC(0,11)
+RC(1,0)  RC(1,1)  RC(1,2)  RC(1,3)  RC(1,4)  RC(1,5)   RC(1,6)  RC(1,7)  RC(1,8)  RC(1,9)  RC(1,10) RC(1,11)
+RC(2,0)  RC(2,1)  RC(2,2)  RC(2,3)  RC(2,4)  RC(2,5)   RC(2,6)  RC(2,7)  RC(2,8)  RC(2,9)  RC(2,10) RC(2,11)
+                         RC(3,0)  RC(3,1)  RC(3,2)  RC(3,3)  RC(3,4)  RC(3,6)  RC(3,7)  RC(3,8)  RC(3,9)  RC(3,10)
+        >;
+    };
+
+    physical_layout0: physical_layout_0 {
+        compatible = "zmk,physical-layout";
+        display-name = "Onmi44 v3";
+        kscan = <&kscan0>;
+        transform = <&default_transform>;
+    };
+
+    analog_stick0: analog_stick0 {
+        compatible = "zmk,analog-stick";
+        io-channels = <&adc 5>, <&adc 6>;
+        // Rough first calibration, refine after flashing:
+        // center = 1.65V of 0..3.6V range at gain 1/6 + internal 0.6V ref = 1872/4095
+        x-min = <50>;
+        x-center = <1872>;
+        x-max = <4045>;
+        y-min = <50>;
+        y-center = <1872>;
+        y-max = <4045>;
+        invert-x;
+        deadzone-percent = <5>;
+        wait-period-idle = <100>;
+        wait-period-active = <10>;
+    };
+};
+
+// SAADC channels 5/6 (channel 0 is taken by battery VDDHDIV5, channel 2 by v1 battery divider)
+&adc {
+    status = "okay";
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@5 {
+        reg = <5>;
+        zephyr,gain = "ADC_GAIN_1_6";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
+        zephyr,input-positive = <NRF_SAADC_AIN7>;
+        zephyr,resolution = <12>;
+        zephyr,oversampling = <4>;
+    };
+
+    channel@6 {
+        reg = <6>;
+        zephyr,gain = "ADC_GAIN_1_6";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>;
+        zephyr,input-positive = <NRF_SAADC_AIN0>;
+        zephyr,resolution = <12>;
+        zephyr,oversampling = <4>;
+    };
+};
+
+&uicr {
+    nfct-pins-as-gpios;
+};

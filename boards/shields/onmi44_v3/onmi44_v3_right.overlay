@@ -1,0 +1,18 @@
+/*
+ * Onmi44 v3 right half - BLE peripheral, forwards its stick to the central.
+ */
+
+#include "onmi44_v3.dtsi"
+
+// Left half has 6 columns (0..5), so local columns map to 6..11.
+&default_transform {
+    col-offset = <6>;
+};
+
+/ {
+    analog_stick_split0: analog_stick_split0 {
+        compatible = "zmk,analog-stick-split";
+        device = <&analog_stick0>;
+        reg = <0>;
+    };
+};

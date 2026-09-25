@@ -1,0 +1,12 @@
+file_format: "1"
+id: onmi44_v3
+name: Onmi44 v3
+type: shield
+url: https://github.com/BullyMulligan/tester_pro_micro
+requires: [pro_micro]
+features:
+  - keys
+  - display
+siblings:
+  - onmi44_v3_left
+  - onmi44_v3_right

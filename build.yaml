@@ -2,4 +2,8 @@
 # See: https://zmk.dev/docs/customization
 include:
   - board: nice_nano//zmk
-    shield: gpio_test
+    shield: onmi44_v3_left nice_view
+    artifact-name: onmi44_v3_left
+  - board: nice_nano//zmk
+    shield: onmi44_v3_right nice_view
+    artifact-name: onmi44_v3_right

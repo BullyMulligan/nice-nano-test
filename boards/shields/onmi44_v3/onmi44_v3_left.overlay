@@ -1,0 +1,35 @@
+/*
+ * Onmi44 v3 left half - BLE central, hosts its own stick + proxies the right one.
+ */
+
+#include "onmi44_v3.dtsi"
+
+/ {
+    // Proxy for the stick on the right (peripheral) half.
+    analog_stick_split0: analog_stick_split0 {
+        compatible = "zmk,analog-stick-split";
+        reg = <0>;
+    };
+
+    // Local stick on the left half.
+    analog_stick_listener0: analog_stick_listener0 {
+        compatible = "zmk,analog-stick-listener";
+        device = <&analog_stick0>;
+
+        layer0 {
+            layers = <0 1>;
+            mode = <1>; // ANALOG_STICK_MODE_MOUSE
+        };
+    };
+
+    // Stick forwarded from the right half.
+    analog_stick_listener1: analog_stick_listener1 {
+        compatible = "zmk,analog-stick-listener";
+        device = <&analog_stick_split0>;
+
+        layer0 {
+            layers = <0 1>;
+            mode = <1>; // ANALOG_STICK_MODE_MOUSE
+        };
+    };
+};

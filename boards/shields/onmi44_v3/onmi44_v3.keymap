@@ -1,0 +1,31 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            // Position order matches the matrix transform:
+            //   row0: L(6) R(6) | row1: L(6) R(6) | row2: L(6) R(6) |
+            //   row3: L(4) L-stick-button | R(4) R-stick-button
+            bindings = <
+//  L0        L1        L2        L3        L4        L5          R0        R1        R2        R3        R4        R5
+&kp TAB    &kp Q     &kp W     &kp E     &kp R     &kp T       &kp Y     &kp U     &kp I     &kp O     &kp P     &kp BSPC
+&kp LEFT_CONTROL &kp A &kp S    &kp D     &kp F     &kp G       &kp H     &kp J     &kp K     &kp L     &kp SEMICOLON &kp SINGLE_QUOTE
+&kp LEFT_GUI &kp Z   &kp X     &kp C     &kp V     &kp B       &kp N     &kp M     &kp COMMA &kp DOT   &kp FSLH  &kp RIGHT_SHIFT
+//  row3 left: mods+space                     L-button         row3 right: arrows                     R-button
+&kp LEFT_ALT &kp SPACE &kp DELETE &kp ESC   &mo 1             &kp LEFT_ARROW &kp DOWN_ARROW &kp UP_ARROW &kp RIGHT_ARROW &kp ENTER
+            >;
+        };
+
+        raise_layer {
+            bindings = <
+&kp N1      &kp N2     &kp N3     &kp N4     &kp N5     &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS   &kp EQUAL
+&kp F1      &kp F2     &kp F3     &kp F4     &kp F5     &kp F6      &kp F7      &kp F8      &kp F9      &kp F10     &kp F11     &kp F12
+&kp EXCL    &kp AT     &kp HASH   &kp DOLLAR &kp PRCNT  &kp AMPERSAND &kp ASTERISK &kp LPAR   &kp RIGHT_PARENTHESIS &kp UNDER &kp PLUS  &kp PIPE
+&trans      &trans     &trans     &trans     &trans                 &kp LEFT_ARROW &kp DOWN_ARROW &kp UP_ARROW &kp RIGHT_ARROW &trans
+            >;
+        };
+    };
+};
