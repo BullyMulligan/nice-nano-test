@@ -8,7 +8,7 @@
     // Proxy for the stick on the right (peripheral) half.
     analog_stick_split0: analog_stick_split0 {
         compatible = "zmk,analog-stick-split";
-        reg = <0>;
+        reg = <0 0>;
     };
 
     // Local stick on the left half.
