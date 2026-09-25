@@ -12,7 +12,7 @@
         #size-cells = <0>;
 
         // Proxy for the stick on the right (peripheral) half.
-        analog_stick_split0: analog_stick_split0 {
+        analog_stick_split0: analog_stick_split@0 {
             compatible = "zmk,analog-stick-split";
             reg = <0>;
         };

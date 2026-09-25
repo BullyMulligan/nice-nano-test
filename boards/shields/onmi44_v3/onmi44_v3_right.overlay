@@ -16,7 +16,7 @@
         #address-cells = <1>;
         #size-cells = <0>;
 
-        analog_stick_split0: analog_stick_split0 {
+        analog_stick_split0: analog_stick_split@0 {
             compatible = "zmk,analog-stick-split";
             device = <&analog_stick0>;
             reg = <0>;
